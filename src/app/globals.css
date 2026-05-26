@@ -1,26 +1,175 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────────
+   Dark mode variant — triggers on .dark class set by next-themes
+   ───────────────────────────────────────────────────────────────── */
+@variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────────────────────────
+   Prompt AI News — Brand Design Tokens  (Tailwind v4 @theme)
+   All colors are available as Tailwind utilities, e.g.:
+     bg-brand-blue        text-brand-navy      border-brand-border
+     bg-surface           text-body            text-muted
+     bg-cat-commentary    bg-cat-interviews    bg-cat-career
+   ───────────────────────────────────────────────────────────────── */
+@theme {
+  /* ── Static brand palette ─────────────────────────────────────── */
+  --color-brand-navy:   #0D1B3E; /* "Prompt" text in light mode      */
+  --color-brand-blue:   #4A90D9; /* "AI News" accent — always        */
+  --color-brand-white:  #FFFFFF;
+
+  /* ── Category badge colors ────────────────────────────────────── */
+  --color-cat-commentary: #4A90D9;
+  --color-cat-interviews: #2ECC71;
+  --color-cat-career:     #F39C12;
+
+  /* ── Semantic aliases (read from CSS vars below) ──────────────── */
+  /* These flip automatically when .dark is applied by next-themes   */
+  --color-bg:      var(--pan-bg);
+  --color-surface: var(--pan-surface);
+  --color-body:    var(--pan-body);
+  --color-muted:   var(--pan-muted);
+  --color-border:  var(--pan-border);
+
+  /* ── Typography ───────────────────────────────────────────────── */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Light mode (default) — CSS custom properties
+   ───────────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --pan-bg:      #F7F9FC;
+  --pan-surface: #FFFFFF;
+  --pan-body:    #1A1A2E;
+  --pan-muted:   #8A9BB0;
+  --pan-border:  #B8D4F0;
+
+  /* Used by logo SVG component */
+  --pan-logo-text:   #0D1B3E;
+  --pan-logo-border: #B8D4F0;
+  --pan-logo-bg:     #FFFFFF;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ─────────────────────────────────────────────────────────────────
+   Dark mode — applied when next-themes sets class="dark" on <html>
+   ───────────────────────────────────────────────────────────────── */
+.dark {
+  --pan-bg:      #0A0F1E;
+  --pan-surface: #111827;
+  --pan-body:    #E8EDF5;
+  --pan-muted:   #6B7A99;
+  --pan-border:  #1E3A5F;
+
+  /* Used by logo SVG component */
+  --pan-logo-text:   #FFFFFF;
+  --pan-logo-border: #1E3A5F;
+  --pan-logo-bg:     transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─────────────────────────────────────────────────────────────────
+   Base document styles
+   ───────────────────────────────────────────────────────────────── */
+html {
+  /* Smooth theme transitions — only for background & color */
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--pan-bg);
+  color: var(--pan-body);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Prose / reading defaults — used inside PostBody
+   ───────────────────────────────────────────────────────────────── */
+.prose-pan {
+  color: var(--pan-body);
+  line-height: 1.75;
+  font-size: 1.0625rem;
+}
+
+.prose-pan p {
+  margin-bottom: 1.35rem;
+}
+
+.prose-pan a {
+  color: #4A90D9;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-pan a:hover {
+  opacity: 0.8;
+}
+
+.prose-pan h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--pan-body);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.prose-pan h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pan-body);
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.35;
+}
+
+.prose-pan h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--pan-body);
+  margin-top: 1.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.prose-pan blockquote {
+  border-left: 4px solid #4A90D9;
+  padding: 0.5rem 0 0.5rem 1.25rem;
+  margin: 1.75rem 0;
+  font-style: italic;
+  color: var(--pan-muted);
+}
+
+.prose-pan ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.35rem;
+}
+
+.prose-pan ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1.35rem;
+}
+
+.prose-pan li {
+  margin-bottom: 0.35rem;
+}
+
+.prose-pan code {
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 0.875em;
+  background-color: var(--pan-surface);
+  border: 1px solid var(--pan-border);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+}
+
+.prose-pan strong {
+  font-weight: 700;
+  color: var(--pan-body);
+}
+
+.prose-pan em {
+  font-style: italic;
 }

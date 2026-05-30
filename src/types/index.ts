@@ -31,6 +31,8 @@ export interface Post {
   author:      string
   /** Full YouTube watch URL — present means the post is video-led */
   youtubeUrl?: string
+  /** Carlos's recorded audio URL — when present plays instead of AI voice */
+  audioUrl?: string | null
   body:        PortableTextBlock[]
   excerpt:     string
   featured:    boolean

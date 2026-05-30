@@ -3,9 +3,11 @@ import { redirect }       from 'next/navigation'
 import { getStats, getPageviews, getMetrics } from '@/lib/umami'
 import { PageviewsChart, MetricsBar }         from './DashboardCharts'
 
-function StatCard({ label, value, prev }: { label: string; value: number; prev: number }) {
-  const change  = prev > 0 ? Math.round(((value - prev) / prev) * 100) : 0
-  const up      = change >= 0
+function StatCard({ label, value, prev }: { label: string; value: number | undefined; prev: number | undefined }) {
+  const safeValue = value ?? 0
+  const safePrev  = prev  ?? 0
+  const change    = safePrev > 0 ? Math.round(((safeValue - safePrev) / safePrev) * 100) : 0
+  const up        = change >= 0
   return (
     <div
       className="flex flex-col gap-2 rounded-2xl border p-5"
@@ -15,9 +17,9 @@ function StatCard({ label, value, prev }: { label: string; value: number; prev: 
         {label}
       </p>
       <p className="text-3xl font-bold" style={{ color: 'var(--pan-body)' }}>
-        {value.toLocaleString()}
+        {safeValue.toLocaleString()}
       </p>
-      {prev > 0 && (
+      {safePrev > 0 && (
         <p className="text-xs font-medium" style={{ color: up ? '#22c55e' : '#ef4444' }}>
           {up ? '▲' : '▼'} {Math.abs(change)}% vs prev period
         </p>
@@ -90,11 +92,11 @@ export default async function DashboardPage() {
       {/* ── Stat cards ──────────────────────────────────────────── */}
       {s ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Visitors"   value={s.visitors.value}  prev={s.visitors.prev}  />
-          <StatCard label="Page Views" value={s.pageviews.value} prev={s.pageviews.prev} />
-          <StatCard label="Visits"     value={s.visits.value}    prev={s.visits.prev}    />
+          <StatCard label="Visitors"   value={s.visitors?.value}  prev={s.visitors?.prev}  />
+          <StatCard label="Page Views" value={s.pageviews?.value} prev={s.pageviews?.prev} />
+          <StatCard label="Visits"     value={s.visits?.value}    prev={s.visits?.prev}    />
           <StatCard label="Bounce Rate"
-            value={s.visits.value > 0 ? Math.round((s.bounces.value / s.visits.value) * 100) : 0}
+            value={(s.visits?.value ?? 0) > 0 ? Math.round(((s.bounces?.value ?? 0) / (s.visits?.value ?? 1)) * 100) : 0}
             prev={0}
           />
         </div>

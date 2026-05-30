@@ -21,6 +21,7 @@
  */
 
 import { notFound }         from 'next/navigation'
+import { Suspense }          from 'react'
 import type { Metadata }     from 'next'
 import { client }            from '@/lib/sanity.client'
 import { getPostBySlug }     from '@/lib/sanity.fetchers'
@@ -35,8 +36,11 @@ import {
   ShareButtons,
   RelatedPosts,
 }                            from '@/components/post'
+import { PostAutoReader }    from '@/components/post/PostAutoReader'
 import { JsonLd }            from '@/components/seo/JsonLd'
+import { extractPlainText }  from '@/lib/utils'
 import type { PostCard }     from '@/types'
+import type { PortableTextBlock } from 'next-sanity'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptainews.com'
 
@@ -98,6 +102,10 @@ export default async function PostPage({
   const post = await getPostBySlug(slug)
   if (!post) notFound()
 
+  const plainText = post.body?.length
+    ? extractPlainText(post.body as unknown as Array<{ _type: string; children?: Array<{ text?: string }> }>)
+    : ''
+
   // Related posts (needs category._id and post._id from above)
   const relatedPosts = await client.fetch<PostCard[]>(RELATED_POSTS_QUERY, {
     categoryId: post.category._id,
@@ -152,6 +160,13 @@ export default async function PostPage({
         <ShareButtons title={post.title} />
 
       </div>
+
+      {/* ── Auto-reader widget (floats bottom-right when ?listen=1) ─ */}
+      {plainText && (
+        <Suspense fallback={null}>
+          <PostAutoReader text={plainText} />
+        </Suspense>
+      )}
 
       {/* ── Related posts (wider container) ──────────────────────── */}
       {relatedPosts.length > 0 && (

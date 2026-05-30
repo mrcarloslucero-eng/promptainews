@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter }         from 'next/font/google'
+import Script            from 'next/script'
 import { Providers }                 from './providers'
 import { Header, Footer }            from '@/components/layout'
 import { client }                    from '@/lib/sanity.client'
@@ -73,6 +74,13 @@ export default async function RootLayout({
           </main>
           <Footer siteSettings={siteSettings} />
         </Providers>
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script
+            src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   )

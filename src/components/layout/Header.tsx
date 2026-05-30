@@ -75,7 +75,7 @@ export function Header() {
 
         {/* Logo */}
         <Link href="/" onClick={() => setOpen(false)} aria-label="Prompt AI News — home">
-          <LogoFull size="sm" showTagline={false} />
+          <LogoFull size="lg" showTagline={false} />
         </Link>
 
         {/* Desktop nav */}

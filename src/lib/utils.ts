@@ -4,6 +4,22 @@
  * Shared utility functions used across the app.
  */
 
+// ─── Plain-text extraction ────────────────────────────────────────────────────
+
+/**
+ * Extract plain text from a Portable Text body array for TTS or search use.
+ */
+export function extractPlainText(
+  body: Array<{ _type: string; children?: Array<{ text?: string }> }>,
+): string {
+  return body
+    .filter((b) => b._type === 'block')
+    .flatMap((b) => b.children?.map((c) => c.text ?? '') ?? [])
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 // ─── Reading time ─────────────────────────────────────────────────────────────
 
 /**

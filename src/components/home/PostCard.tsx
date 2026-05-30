@@ -25,7 +25,8 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const { title, slug, category, excerpt, publishDate, youtubeUrl } = post
-  const href = `/posts/${slug.current}`
+  const isCommentary = category?.slug?.current === 'commentary'
+  const href = `/posts/${slug.current}${isCommentary ? '?listen=1' : ''}`
 
   return (
     <article

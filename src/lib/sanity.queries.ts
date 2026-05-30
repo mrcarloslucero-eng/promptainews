@@ -78,6 +78,7 @@ export const POST_BY_SLUG_QUERY = groq`
     publishDate,
     author,
     youtubeUrl,
+    "audioUrl": audioFile.asset->url,
     excerpt,
     featured,
     tags,

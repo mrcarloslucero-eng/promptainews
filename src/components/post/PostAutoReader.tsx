@@ -5,8 +5,11 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 interface PostAutoReaderProps {
-  text: string
+  text:      string
+  audioUrl?: string | null   // Carlos's recorded voice — plays instead of AI voice when present
 }
+
+// ── AI voice fallback ─────────────────────────────────────────────────────────
 
 function pickVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
   return (
@@ -34,6 +37,8 @@ function getVoice(): Promise<SpeechSynthesisVoice | null> {
   })
 }
 
+// ── Equalizer bar config ──────────────────────────────────────────────────────
+
 const BARS: [number, number][] = [
   [0.8, 0.00],
   [0.5, 0.10],
@@ -43,34 +48,52 @@ const BARS: [number, number][] = [
   [0.7, 0.25],
 ]
 
-export function PostAutoReader({ text }: PostAutoReaderProps) {
+// ── Component ─────────────────────────────────────────────────────────────────
+
+export function PostAutoReader({ text, audioUrl }: PostAutoReaderProps) {
   const params   = useSearchParams()
   const autoplay = params.get('listen') === '1'
 
-  const [speaking, setSpeaking] = useState(false)
-  const [visible,  setVisible]  = useState(autoplay)
-  const startedRef = useRef(false)
+  const [speaking,  setSpeaking]  = useState(false)
+  const [visible,   setVisible]   = useState(autoplay)
+  const startedRef  = useRef(false)
+  const audioRef    = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    if (!autoplay || startedRef.current || !window.speechSynthesis) return
+    if (!autoplay || startedRef.current) return
     startedRef.current = true
 
-    getVoice().then((voice) => {
-      const utterance      = new SpeechSynthesisUtterance(text)
-      utterance.rate       = 0.92
-      utterance.pitch      = 1
-      utterance.volume     = 1
-      if (voice) utterance.voice = voice
-      utterance.onstart = () => setSpeaking(true)
-      utterance.onend   = () => { setSpeaking(false) }
-      utterance.onerror = () => { setSpeaking(false) }
-      window.speechSynthesis.speak(utterance)
-    })
+    if (audioUrl) {
+      // ── Play Carlos's recorded voice ──────────────────────────────
+      const audio      = new Audio(audioUrl)
+      audioRef.current = audio
+      audio.onplay     = () => setSpeaking(true)
+      audio.onended    = () => setSpeaking(false)
+      audio.onerror    = () => setSpeaking(false)
+      audio.play().catch(() => setSpeaking(false))
+    } else if (window.speechSynthesis) {
+      // ── Fall back to AI voice ─────────────────────────────────────
+      getVoice().then((voice) => {
+        const utterance      = new SpeechSynthesisUtterance(text)
+        utterance.rate       = 0.92
+        utterance.pitch      = 1
+        utterance.volume     = 1
+        if (voice) utterance.voice = voice
+        utterance.onstart = () => setSpeaking(true)
+        utterance.onend   = () => setSpeaking(false)
+        utterance.onerror = () => setSpeaking(false)
+        window.speechSynthesis.speak(utterance)
+      })
+    }
 
-    return () => { window.speechSynthesis.cancel() }
-  }, [autoplay, text])
+    return () => {
+      audioRef.current?.pause()
+      window.speechSynthesis?.cancel()
+    }
+  }, [autoplay, audioUrl, text])
 
   function stopReading() {
+    audioRef.current?.pause()
     window.speechSynthesis?.cancel()
     setSpeaking(false)
     setVisible(false)
@@ -96,12 +119,12 @@ export function PostAutoReader({ text }: PostAutoReaderProps) {
       <div
         className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl"
         style={{
-          background:  'var(--pan-surface)',
-          border:      '1px solid var(--pan-border)',
-          boxShadow:   '0 8px 32px rgba(0,0,0,0.18)',
+          background: 'var(--pan-surface)',
+          border:     '1px solid var(--pan-border)',
+          boxShadow:  '0 8px 32px rgba(0,0,0,0.18)',
         }}
       >
-        {/* Photo + bars */}
+        {/* Photo + equalizer bars */}
         <span className="flex flex-col items-center gap-1.5">
           <span
             className="rounded-full overflow-hidden"
@@ -159,7 +182,7 @@ export function PostAutoReader({ text }: PostAutoReaderProps) {
           </span>
         </span>
 
-        {/* Stop / close button */}
+        {/* Stop button */}
         <button
           onClick={stopReading}
           aria-label="Stop reading"

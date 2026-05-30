@@ -164,7 +164,7 @@ export default async function PostPage({
       {/* ── Auto-reader widget (floats bottom-right when ?listen=1) ─ */}
       {plainText && (
         <Suspense fallback={null}>
-          <PostAutoReader text={plainText} />
+          <PostAutoReader text={plainText} audioUrl={post.audioUrl ?? null} />
         </Suspense>
       )}
 

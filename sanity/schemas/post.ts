@@ -72,6 +72,17 @@ export const post = defineType({
       initialValue: 'Prompt AI News',
     }),
 
+    // ── Audio ─────────────────────────────────────────────────────
+    defineField({
+      name: 'audioFile',
+      title: 'Audio Recording (Carlos\'s Voice)',
+      type: 'file',
+      description:
+        'Upload an MP3 recording of Carlos reading this summary. ' +
+        'When present, "Tap to listen" plays this instead of the AI voice.',
+      options: { accept: 'audio/*' },
+    }),
+
     // ── Video ─────────────────────────────────────────────────────
     defineField({
       name: 'youtubeUrl',

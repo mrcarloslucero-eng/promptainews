@@ -53,10 +53,9 @@ export default function DashboardLogin() {
             required
             className="w-full px-4 py-2.5 rounded-xl border text-sm outline-none focus:ring-2"
             style={{
-              background:   'var(--pan-bg)',
-              borderColor:  'var(--pan-border)',
-              color:        'var(--pan-body)',
-              ringColor:    '#4A90D9',
+              background:  'var(--pan-bg)',
+              borderColor: 'var(--pan-border)',
+              color:       'var(--pan-body)',
             }}
           />
 

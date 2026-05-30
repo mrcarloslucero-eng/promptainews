@@ -40,7 +40,7 @@ export function HeroPost({ post }: HeroPostProps) {
         aria-hidden
         className="absolute inset-0"
         style={{
-          backgroundImage:    'url(/hero-bg.png)',
+          backgroundImage:    'url(/hero-bg.avif)',
           backgroundSize:     'cover',
           backgroundPosition: 'center',
           zIndex:             0,

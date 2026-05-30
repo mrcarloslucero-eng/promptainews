@@ -83,7 +83,7 @@ export function HeroPost({ post }: HeroPostProps) {
         <h1
           id="hero-post-heading"
           className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight"
-          style={{ color: '#ffffff' }}
+          style={{ color: '#ffffff', textShadow: '0 2px 18px rgba(0,0,0,0.75), 0 1px 4px rgba(0,0,0,0.5)' }}
         >
           <Link
             href={href}
@@ -97,7 +97,7 @@ export function HeroPost({ post }: HeroPostProps) {
         {excerpt && (
           <p
             className="text-base sm:text-lg leading-relaxed line-clamp-3 max-w-3xl"
-            style={{ color: 'rgba(255,255,255,0.82)' }}
+            style={{ color: '#ffffff', textShadow: '0 1px 12px rgba(0,0,0,0.6)' }}
           >
             {excerpt}
           </p>

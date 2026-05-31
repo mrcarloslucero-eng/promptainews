@@ -35,6 +35,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@PromptAINews',
   },
+  verification: {
+    google: 'NuBzujiExq6ccuD5lE-HLgxiJfwi9k9SzScG3vQ2gHo',
+  },
 }
 
 /**

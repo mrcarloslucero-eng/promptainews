@@ -27,7 +27,6 @@ import {
   PostGrid,
   LatestEpisode,
   PartnerBanner,
-  SocialCallout,
 }                               from '@/components/home'
 import { LoadMorePosts }        from '@/components/home/LoadMorePosts'
 import { JsonLd }               from '@/components/seo/JsonLd'
@@ -113,9 +112,6 @@ export default async function HomePage() {
 
       {/* ── Partner Banner ───────────────────────────────────────── */}
       <PartnerBanner siteSettings={siteSettings} />
-
-      {/* ── Social Callout ───────────────────────────────────────── */}
-      <SocialCallout siteSettings={siteSettings} />
 
     </div>
     </>

@@ -36,9 +36,13 @@ export function SocialCallout({ siteSettings }: SocialCalloutProps) {
         >
           Follow Prompt AI News
         </h2>
-        <p className="text-sm" style={{ color: 'var(--pan-muted)' }}>
-          Stay up to date — we post daily breakdowns and video commentary.
-        </p>
+        <a
+          href="mailto:officialpromptainews@gmail.com"
+          className="text-sm font-medium transition-opacity hover:opacity-70"
+          style={{ color: '#4A90D9' }}
+        >
+          officialpromptainews@gmail.com
+        </a>
       </div>
 
       <SocialBar links={links} />

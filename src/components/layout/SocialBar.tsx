@@ -74,8 +74,8 @@ export function SocialBar({ links, className = '' }: SocialBarProps) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={label}
-          className="transition-colors hover:text-brand-blue"
-          style={{ color: 'var(--pan-muted)' }}
+          className="transition-colors hover:opacity-70"
+          style={{ color: '#4A90D9' }}
         >
           <Icon />
         </a>

@@ -28,6 +28,7 @@ import { getPostBySlug }     from '@/lib/sanity.fetchers'
 import {
   RELATED_POSTS_QUERY,
   ALL_POST_SLUGS_QUERY,
+  COMMENTS_BY_POST_QUERY,
 }                            from '@/lib/sanity.queries'
 import {
   VideoHero,
@@ -37,6 +38,8 @@ import {
   RelatedPosts,
 }                            from '@/components/post'
 import { PostAutoReader }    from '@/components/post/PostAutoReader'
+import { CommentForm }       from '@/components/post/CommentForm'
+import { CommentList }       from '@/components/post/CommentList'
 import { JsonLd }            from '@/components/seo/JsonLd'
 import { extractPlainText }  from '@/lib/utils'
 import type { PostCard }     from '@/types'
@@ -106,11 +109,17 @@ export default async function PostPage({
     ? extractPlainText(post.body as unknown as Array<{ _type: string; children?: Array<{ text?: string }> }>)
     : ''
 
-  // Related posts (needs category._id and post._id from above)
-  const relatedPosts = await client.fetch<PostCard[]>(RELATED_POSTS_QUERY, {
-    categoryId: post.category._id,
-    currentId:  post._id,
-  })
+  // Fetch related posts and approved comments in parallel
+  const [relatedPosts, comments] = await Promise.all([
+    client.fetch<PostCard[]>(RELATED_POSTS_QUERY, {
+      categoryId: post.category._id,
+      currentId:  post._id,
+    }),
+    client.fetch<Array<{ _id: string; name: string; message: string; _createdAt: string }>>(
+      COMMENTS_BY_POST_QUERY,
+      { postId: post._id }
+    ),
+  ])
 
   // ── JSON-LD — NewsArticle structured data ─────────────────────────────────
   const articleSchema = {
@@ -158,6 +167,41 @@ export default async function PostPage({
         <hr style={{ borderColor: 'var(--pan-border)' }} />
 
         <ShareButtons title={post.title} />
+
+        <hr style={{ borderColor: 'var(--pan-border)' }} />
+
+        {/* ── Comments ──────────────────────────────────────────── */}
+        <section aria-labelledby="comments-heading" className="flex flex-col gap-6">
+          <h2
+            id="comments-heading"
+            className="text-xl font-bold"
+            style={{ color: 'var(--pan-body)' }}
+          >
+            {comments.length > 0
+              ? `${comments.length} Comment${comments.length === 1 ? '' : 's'}`
+              : 'Leave a Comment'}
+          </h2>
+
+          {/* Approved comments */}
+          <CommentList comments={comments} />
+
+          {/* Submission form */}
+          <div
+            className="rounded-2xl border p-6"
+            style={{
+              background:  'var(--pan-surface)',
+              borderColor: 'var(--pan-border)',
+            }}
+          >
+            <p
+              className="text-sm mb-4"
+              style={{ color: 'var(--pan-muted)' }}
+            >
+              All comments are reviewed before appearing. Keep it respectful.
+            </p>
+            <CommentForm postId={post._id} postTitle={post.title} />
+          </div>
+        </section>
 
       </div>
 

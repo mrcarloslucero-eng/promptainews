@@ -171,3 +171,21 @@ export const SITE_SETTINGS_QUERY = groq`
     partnerUrl
   }
 `
+
+/**
+ * Approved comments for a specific post — ordered oldest first so
+ * comments read like a conversation thread.
+ * $postId — the _id of the post document.
+ */
+export const COMMENTS_BY_POST_QUERY = groq`
+  *[
+    _type == "comment"
+    && post._ref == $postId
+    && approved == true
+  ] | order(_createdAt asc) {
+    _id,
+    name,
+    message,
+    _createdAt
+  }
+`

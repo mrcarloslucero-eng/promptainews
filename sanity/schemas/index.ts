@@ -6,5 +6,6 @@
 import { post }         from './post'
 import { category }     from './category'
 import { siteSettings } from './siteSettings'
+import { comment }      from './comment'
 
-export const schemaTypes = [post, category, siteSettings]
+export const schemaTypes = [post, category, siteSettings, comment]

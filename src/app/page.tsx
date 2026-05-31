@@ -29,6 +29,7 @@ import {
   PartnerBanner,
   SocialCallout,
 }                               from '@/components/home'
+import { LoadMorePosts }        from '@/components/home/LoadMorePosts'
 import { JsonLd }               from '@/components/seo/JsonLd'
 import type { PostCard, SiteSettings } from '@/types'
 
@@ -78,7 +79,15 @@ export default async function HomePage() {
       {featuredPost && <HeroPost post={featuredPost} />}
 
       {/* ── Latest Articles grid ─────────────────────────────────── */}
-      {latestPosts.length > 0 && <PostGrid posts={latestPosts} />}
+      {latestPosts.length > 0 && (
+        <>
+          <PostGrid posts={latestPosts} />
+          <LoadMorePosts
+            featuredId={featuredPost?._id ?? ''}
+            initialSkip={latestPosts.length + 1}
+          />
+        </>
+      )}
 
       {/* ── Empty state — no content yet ─────────────────────────── */}
       {!featuredPost && latestPosts.length === 0 && (

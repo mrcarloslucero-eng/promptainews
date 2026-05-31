@@ -36,24 +36,24 @@ export function Footer({ siteSettings }: FooterProps) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
 
           {/* Left — logo, tagline, email */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Link href="/" aria-label="Prompt AI News — home">
-              <LogoFull size="sm" showTagline={false} />
+              <LogoFull size="md" showTagline={false} />
             </Link>
-            <p className="text-xs tracking-wide" style={{ color: 'var(--pan-muted)' }}>
+            <p className="text-sm tracking-wide" style={{ color: 'var(--pan-muted)' }}>
               {tagline}
             </p>
             <a
               href="mailto:officialpromptainews@gmail.com"
-              className="text-xs font-medium transition-opacity hover:opacity-70 mt-0.5"
+              className="text-sm font-semibold transition-opacity hover:opacity-70 mt-0.5"
               style={{ color: '#4A90D9' }}
             >
               officialpromptainews@gmail.com
             </a>
           </div>
 
-          {/* Right — social icons */}
-          <SocialBar links={links} />
+          {/* Right — social icons (larger) */}
+          <SocialBar links={links} size="lg" />
         </div>
 
         {/* ── Bottom bar: copyright + partner ──────────────────────── */}
@@ -66,7 +66,7 @@ export function Footer({ siteSettings }: FooterProps) {
         >
           <span>© {year} Prompt AI News. All rights reserved.</span>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link
               href="/privacy"
               className="transition-colors hover:text-brand-blue"
@@ -76,15 +76,18 @@ export function Footer({ siteSettings }: FooterProps) {
             </Link>
 
             {partner && partnerUrl && (
-              <a
-                href={partnerUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-brand-blue"
-                style={{ color: 'var(--pan-muted)' }}
-              >
-                Partner: {partner}
-              </a>
+              <>
+                <span style={{ color: 'var(--pan-border)' }}>·</span>
+                <a
+                  href={partnerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:opacity-80 font-medium"
+                  style={{ color: '#4A90D9' }}
+                >
+                  Partner: {partner}
+                </a>
+              </>
             )}
           </div>
         </div>

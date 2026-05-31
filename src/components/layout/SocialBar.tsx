@@ -56,17 +56,20 @@ const PLATFORMS = [
 // ─── Component ───────────────────────────────────────────────────────────────
 
 interface SocialBarProps {
-  links: SocialLinks
-  /** Extra classes on the wrapping <div> */
+  links:      SocialLinks
   className?: string
+  size?:      'sm' | 'md' | 'lg'
 }
 
-export function SocialBar({ links, className = '' }: SocialBarProps) {
+const SCALE = { sm: 1, md: 1.3, lg: 1.6 }
+
+export function SocialBar({ links, className = '', size = 'sm' }: SocialBarProps) {
   const active = PLATFORMS.filter((p) => !!links[p.key])
+  const scale  = SCALE[size]
   if (active.length === 0) return null
 
   return (
-    <div className={`flex items-center gap-4 ${className}`}>
+    <div className={`flex items-center gap-5 ${className}`}>
       {active.map(({ key, label, Icon }) => (
         <a
           key={key}
@@ -74,8 +77,13 @@ export function SocialBar({ links, className = '' }: SocialBarProps) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={label}
-          className="transition-colors hover:opacity-70"
-          style={{ color: '#4A90D9' }}
+          className="transition-opacity hover:opacity-70"
+          style={{
+            color:     '#4A90D9',
+            transform: `scale(${scale})`,
+            transformOrigin: 'center',
+            display:   'block',
+          }}
         >
           <Icon />
         </a>

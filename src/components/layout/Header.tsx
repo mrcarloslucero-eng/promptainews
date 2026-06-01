@@ -22,11 +22,12 @@ import { ThemeToggle } from './ThemeToggle'
 // ─── Nav links ────────────────────────────────────────────────────────────────
 
 const NAV_LINKS = [
-  { href: '/',              label: 'Home'          },
-  { href: '/commentary',    label: 'Commentary'    },
-  { href: '/interviews',    label: 'Interviews'    },
-  { href: '/career-corner', label: 'Career Corner' },
-  { href: '/about',         label: 'About'         },
+  { href: '/',                    label: 'Home'          },
+  { href: '/commentary',          label: 'Commentary'    },
+  { href: '/interviews',          label: 'Interviews'    },
+  { href: '/career-corner',       label: 'Career Corner' },
+  { href: '/topics/china-ai',     label: 'China & AI'    },
+  { href: '/about',               label: 'About'         },
 ] as const
 
 // ─── Icons ────────────────────────────────────────────────────────────────────

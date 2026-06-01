@@ -3,7 +3,8 @@
  *
  * Protected endpoint called by the Prompt AI News Daily Draft Publisher
  * remote agent. Receives rewritten stories and posts them as unpublished
- * draft posts to Sanity CMS.
+ * draft posts to Sanity CMS, then pings Bing IndexNow so new slugs are
+ * queued for crawling immediately rather than waiting for passive discovery.
  *
  * Runs on Vercel's servers — bypasses the IP restriction that blocks
  * the remote agent from calling Sanity's mutation API directly.
@@ -24,7 +25,7 @@
  * }
  *
  * Response:
- * { "success": true, "count": 7, "titles": ["..."] }
+ * { "success": true, "count": 7, "titles": ["..."], "indexNow": "ok" | "skipped" | "failed" }
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -79,6 +80,37 @@ function toPortableText(text: string) {
         },
       ],
     }))
+}
+
+// ── IndexNow ping ─────────────────────────────────────────────────────────────
+// Bing's IndexNow protocol: submit a list of URLs and Bing queues them for
+// crawling within minutes. Drafts aren't public yet, but we send their future
+// URLs so Bing is primed the moment Carlos clicks Publish in Sanity Studio.
+// Failure is non-fatal — drafts are still saved even if the ping fails.
+
+async function pingIndexNow(slugs: string[]): Promise<'ok' | 'skipped' | 'failed'> {
+  const key = process.env.INDEXNOW_KEY
+  const host = 'promptainews.com'
+
+  if (!key) return 'skipped'
+
+  const urls = slugs.map((slug) => `https://${host}/posts/${slug}`)
+
+  try {
+    const res = await fetch('https://api.indexnow.org/indexnow', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({
+        host,
+        key,
+        keyLocation: `https://${host}/${key}.txt`,
+        urlList:     urls,
+      }),
+    })
+    return res.ok ? 'ok' : 'failed'
+  } catch {
+    return 'failed'
+  }
 }
 
 // ── Route handler ─────────────────────────────────────────────────────────────
@@ -141,17 +173,23 @@ export async function POST(req: NextRequest) {
   }))
 
   // 5. Post to Sanity
+  const slugs: string[] = []
   try {
     await client.mutate(mutations as Parameters<typeof client.mutate>[0])
+    stories.forEach((s) => slugs.push(slugify(s.title)))
   } catch (err) {
     console.error('Sanity mutation error:', err)
     return NextResponse.json({ error: 'Sanity write failed', detail: String(err) }, { status: 500 })
   }
 
-  // 6. Return success
+  // 6. Ping Bing IndexNow (non-blocking — drafts are saved regardless)
+  const indexNow = await pingIndexNow(slugs)
+
+  // 7. Return success
   return NextResponse.json({
-    success: true,
-    count:   stories.length,
-    titles:  stories.map((s) => s.title),
+    success:  true,
+    count:    stories.length,
+    titles:   stories.map((s) => s.title),
+    indexNow,
   })
 }

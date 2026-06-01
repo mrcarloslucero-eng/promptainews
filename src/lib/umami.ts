@@ -73,7 +73,16 @@ export interface UmamiMetric {
 }
 
 export async function getStats(days = 30): Promise<UmamiStats> {
-  return umamiGet(`/api/websites/${UMAMI_WEBSITE_ID}/stats`, range(days))
+  const data = await umamiGet(`/api/websites/${UMAMI_WEBSITE_ID}/stats`, range(days))
+  // Umami v2 returns flat numbers + a comparison object instead of { value, prev } per field
+  const c = data.comparison ?? {}
+  return {
+    pageviews: { value: data.pageviews ?? 0, prev: c.pageviews ?? 0 },
+    visitors:  { value: data.visitors  ?? 0, prev: c.visitors  ?? 0 },
+    visits:    { value: data.visits    ?? 0, prev: c.visits    ?? 0 },
+    bounces:   { value: data.bounces   ?? 0, prev: c.bounces   ?? 0 },
+    totaltime: { value: data.totaltime ?? 0, prev: c.totaltime ?? 0 },
+  }
 }
 
 export async function getPageviews(days = 30): Promise<{ pageviews: UmamiPageview[]; sessions: UmamiPageview[] }> {

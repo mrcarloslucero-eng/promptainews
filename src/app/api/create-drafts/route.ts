@@ -62,24 +62,63 @@ function randomKey(): string {
 }
 
 function toPortableText(text: string) {
+  // Regex to find markdown links: [text](url)
+  const LINK_RE = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g
+
   return text
     .split(/\n{2,}/)
     .map((p) => p.trim())
     .filter(Boolean)
-    .map((paragraph) => ({
-      _type:    'block',
-      _key:     randomKey(),
-      style:    'normal',
-      markDefs: [],
-      children: [
-        {
+    .map((paragraph) => {
+      const markDefs: Array<{ _type: string; _key: string; href: string }> = []
+      const children: Array<{ _type: string; _key: string; text: string; marks: string[] }> = []
+
+      let lastIndex = 0
+      let match: RegExpExecArray | null
+
+      LINK_RE.lastIndex = 0
+      while ((match = LINK_RE.exec(paragraph)) !== null) {
+        // Plain text before this link
+        if (match.index > lastIndex) {
+          children.push({
+            _type: 'span',
+            _key:  randomKey(),
+            text:  paragraph.slice(lastIndex, match.index),
+            marks: [],
+          })
+        }
+
+        // Link mark
+        const linkKey = randomKey()
+        markDefs.push({ _type: 'link', _key: linkKey, href: match[2] })
+        children.push({
           _type: 'span',
           _key:  randomKey(),
-          text:  paragraph,
+          text:  match[1],
+          marks: [linkKey],
+        })
+
+        lastIndex = match.index + match[0].length
+      }
+
+      // Remaining plain text after last link
+      if (lastIndex < paragraph.length) {
+        children.push({
+          _type: 'span',
+          _key:  randomKey(),
+          text:  paragraph.slice(lastIndex),
           marks: [],
-        },
-      ],
-    }))
+        })
+      }
+
+      return {
+        _type:    'block',
+        _key:     randomKey(),
+        style:    'normal',
+        markDefs,
+        children,
+      }
+    })
 }
 
 // ── IndexNow ping ─────────────────────────────────────────────────────────────

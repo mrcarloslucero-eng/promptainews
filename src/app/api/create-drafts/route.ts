@@ -127,11 +127,11 @@ function toPortableText(text: string) {
 // URLs so Bing is primed the moment Carlos clicks Publish in Sanity Studio.
 // Failure is non-fatal — drafts are still saved even if the ping fails.
 
-async function pingIndexNow(slugs: string[]): Promise<'ok' | 'skipped' | 'failed'> {
+async function pingIndexNow(slugs: string[]): Promise<{ status: 'ok' | 'skipped' | 'failed'; detail?: string }> {
   const key = process.env.INDEXNOW_KEY
   const host = 'promptainews.com'
 
-  if (!key) return 'skipped'
+  if (!key) return { status: 'skipped', detail: 'INDEXNOW_KEY env var not set' }
 
   const urls = slugs.map((slug) => `https://${host}/posts/${slug}`)
 
@@ -146,9 +146,15 @@ async function pingIndexNow(slugs: string[]): Promise<'ok' | 'skipped' | 'failed
         urlList:     urls,
       }),
     })
-    return res.ok ? 'ok' : 'failed'
-  } catch {
-    return 'failed'
+    const body = await res.text()
+    if (!res.ok) {
+      console.error(`IndexNow ping failed — HTTP ${res.status}: ${body}`)
+      return { status: 'failed', detail: `HTTP ${res.status}: ${body}` }
+    }
+    return { status: 'ok' }
+  } catch (err) {
+    console.error('IndexNow ping threw:', err)
+    return { status: 'failed', detail: String(err) }
   }
 }
 
@@ -226,9 +232,10 @@ export async function POST(req: NextRequest) {
 
   // 7. Return success
   return NextResponse.json({
-    success:  true,
-    count:    stories.length,
-    titles:   stories.map((s) => s.title),
-    indexNow,
+    success:       true,
+    count:         stories.length,
+    titles:        stories.map((s) => s.title),
+    indexNow:      indexNow.status,
+    indexNowDetail: indexNow.detail ?? null,
   })
 }

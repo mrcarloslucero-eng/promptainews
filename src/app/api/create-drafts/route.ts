@@ -136,7 +136,7 @@ async function pingIndexNow(slugs: string[]): Promise<{ status: 'ok' | 'skipped'
   const urls = slugs.map((slug) => `https://${host}/posts/${slug}`)
 
   try {
-    const res = await fetch('https://api.indexnow.org/indexnow', {
+    const res = await fetch('https://www.bing.com/indexnow', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify({

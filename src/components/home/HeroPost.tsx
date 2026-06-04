@@ -125,7 +125,7 @@ export function HeroPost({ post }: HeroPostProps) {
             </Link>
           </div>
 
-          <HeroAuthorBadge slug={slug.current} />
+          <HeroAuthorBadge />
         </div>
 
       </div>

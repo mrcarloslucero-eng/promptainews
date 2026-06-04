@@ -1,19 +1,10 @@
 import Image from 'next/image'
-import Link  from 'next/link'
 
-interface HeroAuthorBadgeProps {
-  slug: string
-}
-
-export function HeroAuthorBadge({ slug }: HeroAuthorBadgeProps) {
+export function HeroAuthorBadge() {
   return (
-    <Link
-      href={`/posts/${slug}?listen=1`}
-      className="flex items-center gap-2.5 group"
-      aria-label="Tap to hear Carlos read the summary"
-    >
+    <div className="flex items-center gap-2.5">
       <span
-        className="rounded-full overflow-hidden ring-2 transition-all group-hover:ring-[#4A90D9]"
+        className="rounded-full overflow-hidden"
         style={{
           width:     '3.75rem',
           height:    '3.75rem',
@@ -34,13 +25,10 @@ export function HeroAuthorBadge({ slug }: HeroAuthorBadgeProps) {
         <span className="text-sm font-semibold" style={{ color: 'var(--pan-body)' }}>
           Carlos Lucero
         </span>
-        <span
-          className="text-xs transition-colors group-hover:opacity-80"
-          style={{ color: '#4A90D9' }}
-        >
-          Tap to listen ▶
+        <span className="text-xs" style={{ color: 'var(--pan-muted)' }}>
+          Prompt AI News
         </span>
       </span>
-    </Link>
+    </div>
   )
 }

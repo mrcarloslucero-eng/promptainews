@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     site: '@PromptAINews',
   },
   verification: {
-    google: 'NuBzujiExq6ccuD5lE-HLgxiJfwi9k9SzScG3vQ2gHo',
+    google: ['NuBzujiExq6ccuD5lE-HLgxiJfwi9k9SzScG3vQ2gHo', 'ljR6Voo4H6kiJ24wAtDG-EKGFt9k_XFm2Cq9f9oV2oM'],
     other: {
       'msvalidate.01': '2E261F0504081F6F0FB68174491F8E92',
     },

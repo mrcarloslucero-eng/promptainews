@@ -27,6 +27,7 @@ const NAV_LINKS = [
   { href: '/interviews',          label: 'Interviews'    },
   { href: '/career-corner',       label: 'Career Corner' },
   { href: '/topics/china-ai',     label: 'China & AI'    },
+  { href: '/data-center-info',    label: 'Data Center Info' },
   { href: '/about',               label: 'About'         },
 ] as const
 

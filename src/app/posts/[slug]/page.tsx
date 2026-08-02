@@ -18,6 +18,9 @@
  *     [ShareButtons]   copy / X / LinkedIn
  *   max-w-7xl:
  *     [RelatedPosts]   "More in [Category]" grid
+ *   floating bottom-right:
+ *     [FloatingVideoPlayer]  only if post.videoFile is set (takes priority)
+ *     [PostAutoReader]       otherwise, when ?listen=1
  */
 
 import { notFound }         from 'next/navigation'
@@ -36,6 +39,7 @@ import {
   PostBody,
   ShareButtons,
   RelatedPosts,
+  FloatingVideoPlayer,
 }                            from '@/components/post'
 import { PostAutoReader }    from '@/components/post/PostAutoReader'
 import { CommentForm }       from '@/components/post/CommentForm'
@@ -205,8 +209,14 @@ export default async function PostPage({
 
       </div>
 
-      {/* ── Auto-reader widget (floats bottom-right when ?listen=1) ─ */}
-      {plainText && (
+      {/* ── Floating video commentary (bottom-right, always visible) ─ */}
+      {post.videoUrl && (
+        <FloatingVideoPlayer videoUrl={post.videoUrl} title={post.title} />
+      )}
+
+      {/* ── Auto-reader widget (floats bottom-right when ?listen=1) ─
+           Yields the corner to the video widget when one exists. */}
+      {plainText && !post.videoUrl && (
         <Suspense fallback={null}>
           <PostAutoReader text={plainText} audioUrl={post.audioUrl ?? null} />
         </Suspense>

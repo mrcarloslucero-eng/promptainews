@@ -33,6 +33,8 @@ export interface Post {
   youtubeUrl?: string
   /** Carlos's recorded audio URL — when present plays instead of AI voice */
   audioUrl?: string | null
+  /** Carlos's on-camera commentary URL — shows as a floating video player */
+  videoUrl?: string | null
   body:        PortableTextBlock[]
   excerpt:     string
   featured:    boolean

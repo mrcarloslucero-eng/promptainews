@@ -83,6 +83,17 @@ export const post = defineType({
       options: { accept: 'audio/*' },
     }),
 
+    defineField({
+      name: 'videoFile',
+      title: 'Video Commentary (Carlos on Camera)',
+      type: 'file',
+      description:
+        'Upload a short MP4 (H.264) of Carlos talking about this story — keep it under 2 minutes. ' +
+        'Shows as a floating video player on the post. WMV will not play in browsers; ' +
+        'convert to MP4 first (Clipchamp). Separate from the YouTube URL below.',
+      options: { accept: 'video/mp4,video/*' },
+    }),
+
     // ── Video ─────────────────────────────────────────────────────
     defineField({
       name: 'youtubeUrl',
